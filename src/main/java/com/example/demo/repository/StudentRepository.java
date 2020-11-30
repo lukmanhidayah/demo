@@ -8,6 +8,9 @@ import java.util.Optional;
 
 public interface StudentRepository extends CrudRepository<Student, Long> {
 
-    List<Student> findByNamaContaining(String nama);
     Optional<Student> findByNikContaining(String nik);
+
+    Optional<Student> findByNik2Containing(String nik2);
+
+    Optional<Student> findByNorekContaining(String norek);
 }

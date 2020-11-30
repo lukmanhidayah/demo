@@ -1,7 +1,9 @@
 package com.example.demo.controllers;
 
 import com.example.demo.error.CustomErrorResponse;
+import com.example.demo.models.Ktp;
 import com.example.demo.models.Student;
+import com.example.demo.repository.KtpRepository;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.services.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +18,10 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
 @RestController
 
@@ -25,14 +29,17 @@ import java.util.concurrent.atomic.AtomicLong;
 public class StudentController {
     private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
-
+    private static Logger LOG;
     @Autowired
-    @Qualifier("fileStorageService")
     FileStorageService fileStorageService;
 
     @Autowired
     @Qualifier("studentRepository")
     StudentRepository studentRepository;
+
+    @Autowired
+    @Qualifier("ktpRepository")
+    KtpRepository ktpRepository;
 
     @GetMapping(path = "/all")
     public @ResponseBody
@@ -42,7 +49,7 @@ public class StudentController {
     }
 
     @PostMapping(path = "/add") // Map ONLY POST Requests
-    public ResponseEntity<Student> addNewStudent(@RequestParam String nama, @RequestParam String nik, @RequestParam("file") MultipartFile file) throws ParseException {
+    public ResponseEntity<Student> addNewStudent(@RequestParam String nama, @RequestParam String nik, @RequestParam String norek, @RequestParam String nik2, @RequestParam("file") MultipartFile file) throws ParseException {
         String fileName = fileStorageService.storeFile(file);
 
         //custom error instantiation
@@ -50,27 +57,47 @@ public class StudentController {
         errors.setTimestamp(LocalDateTime.now());
 
         //check length of nik
-        if (nik.length() == 16) {
-            //select to database by nik
-            Optional<Student> nikContaining = studentRepository.findByNikContaining(nik);
+        if (nik.length() == 16 && nik2.length() == 16 && !nik.equals(nik2)) {
 
-            //check nik exist
-            if (!nikContaining.isPresent()) {
-                Date date = new Date();
-                Student n = new Student();
-                n.setNama(nama);
-                n.setNik(nik);
-                n.setImage_url(fileName);
-                n.setCreated_at(new Timestamp(date.getTime()));
-                return new ResponseEntity<>(studentRepository.save(n), HttpStatus.OK);
+            //check
+            Optional<Ktp> ktpNikContaining = ktpRepository.findByNikContaining(nik);
+            Optional<Ktp> ktpNikContaining2 = ktpRepository.findByNikContaining(nik2);
+
+            if (!ktpNikContaining.isEmpty() && !ktpNikContaining2.isEmpty()) {
+
+                //select to database by nik
+                Optional<Student> nikContaining = studentRepository.findByNikContaining(nik);
+                Optional<Student> nik2Containing = studentRepository.findByNik2Containing(nik2);
+                Optional<Student> norekContaining = studentRepository.findByNorekContaining(norek);
+
+
+                //check nik exist
+                if (nikContaining.isEmpty() && nik2Containing.isEmpty() && norekContaining.isEmpty()) {
+                    Date date = new Date();
+                    Student n = new Student();
+                    n.setNama(nama);
+                    n.setNik(nik);
+                    n.setNik2(nik2);
+                    n.setNorek(norek);
+                    n.setImage_url(fileName);
+                    n.setCreated_at(new Timestamp(date.getTime()));
+                    return new ResponseEntity<>(studentRepository.save(n), HttpStatus.OK);
+                } else {
+
+                    errors.setMessage("Nik1, Nik2, or Norek is exist");
+                    errors.setStatus(HttpStatus.FOUND.value());
+
+                    return new ResponseEntity(errors, HttpStatus.FOUND);
+                }
             } else {
-                errors.setMessage("Nik is exist");
+
+                errors.setMessage("Ktp not valid");
                 errors.setStatus(HttpStatus.FOUND.value());
 
                 return new ResponseEntity(errors, HttpStatus.FOUND);
             }
         } else {
-            errors.setMessage("Error validate, nik length must to 16");
+            errors.setMessage("Error validate");
             errors.setStatus(HttpStatus.BAD_REQUEST.value());
 
             return new ResponseEntity(errors, HttpStatus.BAD_REQUEST);

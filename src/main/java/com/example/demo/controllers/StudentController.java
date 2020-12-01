@@ -56,6 +56,8 @@ public class StudentController {
         CustomErrorResponse errors = new CustomErrorResponse();
         errors.setTimestamp(LocalDateTime.now());
 
+        long parseNorek = Long.parseLong("192123234324");
+
         //check length of nik
         if (nik.length() == 16 && nik2.length() == 16 && !nik.equals(nik2)) {
 
@@ -78,7 +80,7 @@ public class StudentController {
                     n.setNama(nama);
                     n.setNik(nik);
                     n.setNik2(nik2);
-                    n.setNorek(norek);
+                    n.setNorek(Integer.valueOf(norek));
                     n.setImage_url(fileName);
                     n.setCreated_at(new Timestamp(date.getTime()));
                     return new ResponseEntity<>(studentRepository.save(n), HttpStatus.OK);

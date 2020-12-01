@@ -28,7 +28,7 @@ public class Student {
     private Date created_at;
 
     @Column(name = "norek")
-    private String norek;
+    private Integer norek;
 
     public long getId() {
         return id;
@@ -78,11 +78,11 @@ public class Student {
         this.created_at = created_at;
     }
 
-    public String getNorek() {
+    public Integer getNorek() {
         return norek;
     }
 
-    public void setNorek(String norek) {
+    public void setNorek(Integer norek) {
         this.norek = norek;
     }
 }

@@ -10,6 +10,7 @@ import java.util.Date;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private long id;
 
     @Column(name = "nama")
@@ -83,6 +84,41 @@ public class Student {
     }
 
     public void setNorek(Integer norek) {
+        this.norek = norek;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", nama='" + nama + '\'' +
+                ", nik='" + nik + '\'' +
+                ", nik2='" + nik2 + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", created_at=" + created_at +
+                ", norek=" + norek +
+                '}';
+    }
+
+    public Student() {
+    }
+
+    public Student(long id, String nama, String nik, String nik2, String image_url, Date created_at, Integer norek) {
+        this.id = id;
+        this.nama = nama;
+        this.nik = nik;
+        this.nik2 = nik2;
+        this.image_url = image_url;
+        this.created_at = created_at;
+        this.norek = norek;
+    }
+
+    public Student(String nama, String nik, String nik2, String image_url, Date created_at, Integer norek) {
+        this.nama = nama;
+        this.nik = nik;
+        this.nik2 = nik2;
+        this.image_url = image_url;
+        this.created_at = created_at;
         this.norek = norek;
     }
 }

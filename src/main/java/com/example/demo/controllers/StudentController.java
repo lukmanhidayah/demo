@@ -18,18 +18,12 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
 
 @RestController
 
 @RequestMapping("/student")
 public class StudentController {
-    private static final String template = "Hello, %s!";
-    private final AtomicLong counter = new AtomicLong();
-    private static Logger LOG;
     @Autowired
     FileStorageService fileStorageService;
 
@@ -55,8 +49,6 @@ public class StudentController {
         //custom error instantiation
         CustomErrorResponse errors = new CustomErrorResponse();
         errors.setTimestamp(LocalDateTime.now());
-
-        long parseNorek = Long.parseLong("192123234324");
 
         //check length of nik
         if (nik.length() == 16 && nik2.length() == 16 && !nik.equals(nik2)) {

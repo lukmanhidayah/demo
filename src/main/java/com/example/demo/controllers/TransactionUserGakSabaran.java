@@ -114,6 +114,8 @@ public class TransactionUserGakSabaran {
                         orderitems.setDiscount(discount);
                         orderitems.setFinal_price((double) (product.get().getPrice() * discount));
                         orderitemsList.add(orderitems);
+                    }else{
+                        throw new ParseException("Student not found", HttpStatus.BAD_REQUEST.value());
                     }
                 }
                 return new ResponseEntity(orderItemsRepository.saveAll(orderitemsList), HttpStatus.OK);

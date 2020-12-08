@@ -10,7 +10,6 @@ import java.util.Date;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private long id;
 
     @Column(name = "nama")
@@ -29,7 +28,7 @@ public class Student {
     private Date created_at;
 
     @Column(name = "norek")
-    private Integer norek;
+    private long norek;
 
     public long getId() {
         return id;
@@ -79,11 +78,11 @@ public class Student {
         this.created_at = created_at;
     }
 
-    public Integer getNorek() {
+    public long getNorek() {
         return norek;
     }
 
-    public void setNorek(Integer norek) {
+    public void setNorek(long norek) {
         this.norek = norek;
     }
 

@@ -4,6 +4,7 @@ import com.example.demo.error.CustomErrorResponse;
 import com.example.demo.models.Orderitems;
 import com.example.demo.models.Orders;
 import com.example.demo.models.Product;
+import com.example.demo.models.Student;
 import com.example.demo.repository.OrderItemsRepository;
 import com.example.demo.repository.OrdersRepository;
 import com.example.demo.repository.ProductRepository;
@@ -45,14 +46,14 @@ public class TransactionUserGakSabaran {
 
     @PostMapping(path = "/add")
     @Transactional(rollbackOn = ParseException.class)
-    public ResponseEntity addTransaction(@RequestParam long orderId, @RequestParam Long product_id, @RequestParam float discount, @RequestParam long student_id) throws ParseException {
+    public ResponseEntity<?> addTransaction(@RequestParam long orderId, @RequestParam Long product_id, @RequestParam float discount, @RequestParam long student_id) throws ParseException {
         //custom error instantiation
         CustomErrorResponse errors = new CustomErrorResponse();
         errors.setTimestamp(LocalDateTime.now());
 
-        boolean resultGet = studentRepository.existsById(student_id);
+        Optional<Student> student = studentRepository.findById(student_id);
 
-        if (resultGet) {
+        if (student.isPresent()) {
             Orders orders = new Orders();
             orders.setStudent_id(student_id);
             orders.setOrder_status(1);
@@ -69,7 +70,7 @@ public class TransactionUserGakSabaran {
                     orderitems.setFinal_price((double) (product.get().getPrice() * discount));
                     return new ResponseEntity(orderItemsRepository.save(orderitems), HttpStatus.OK);
                 } else {
-                    throw new ParseException("Student not found", HttpStatus.BAD_REQUEST.value());
+                    throw new ParseException("Product not found", HttpStatus.BAD_REQUEST.value());
                 }
 
             } else {

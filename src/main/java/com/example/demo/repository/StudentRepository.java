@@ -10,5 +10,5 @@ public interface StudentRepository extends CrudRepository<Student, Long> {
 
     Optional<Student> findByNik2Containing(String nik2);
 
-    Optional<Student> findByNorekContaining(String norek);
+    Optional<Student> findStudentByNorek(long norek);
 }
